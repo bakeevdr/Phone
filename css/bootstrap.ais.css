@@ -1,0 +1,152 @@
+body { 
+	padding-top: 50px; 
+	font-family: tahoma,verdana,arial,sans-serif;
+	font-size: 9pt;
+}
+
+a {
+	color: #333333;
+}
+
+.navbar-AIS{
+    background-color: #006fb8;
+    border-color: #080808;
+}
+
+.navbar-AIS .navbar-brand:focus, 
+.navbar-AIS .navbar-brand:hover, 
+.navbar-AIS .navbar-brand {
+    background-color: transparent;
+    color: #ffffff;
+} 
+
+.navbar-brand .icon-bar {
+    border-radius: 1px;
+    display: block;
+    height: 3px;
+    width: 22px;
+	background-color: #fff;
+}
+
+table > tbody > tr > td > a > span:first-child {
+	padding-left: 5px;
+	font-weight: bold;
+}
+
+table > tbody > tr > td > a > span {
+	padding-left: 20px;
+}
+
+
+.table > tbody > tr > td{
+	padding: 1px;
+	vertical-align: inherit;
+	text-align: center;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th{
+	text-align: center;
+	vertical-align: middle;
+}
+
+.table > tbody > tr > td:first-child{
+	text-align: left;
+}
+
+
+
+#main {
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 55px;
+}
+ 
+#content {
+
+    height: 100%;
+	overflow-y: scroll;
+}
+
+#split-bar {
+    width: 14px;
+    cursor: e-resize;
+	background:transparent url("../image/resizer-v.png") no-repeat 45%;	
+	height:100%; 
+	float: left; 
+}
+#split-bar > div {
+    border-right: 1px solid #6d6d6d;
+    height: 100%;
+    width: 7px;
+}
+
+#sidebar {
+	/*! background: aliceblue none repeat scroll 0 0;*/	
+	 border-radius: 5px; 
+	border-radius: 5px;	
+	padding: 10px 0;
+	width: 240px;
+    float: left;
+	height: 100%;
+    overflow-y: scroll;
+	margin-left: 5px;
+}
+#sidebar .nav > li > a {
+    color: #808080;
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 5px 4px 10px;
+}
+#sidebar .nav .nav {
+    display: none;
+    padding-bottom: 10px;
+}
+#sidebar .nav .nav > li > a {
+    font-size: 12px;
+    font-weight: 400;
+	padding: 4px 5px 4px 20px;
+
+}
+#sidebar .nav > li > a:hover, #sidebar .nav > li > a:focus {
+    background-color: transparent;
+    border-left: 1px solid #563d7c;
+    color: #563d7c;
+    padding-left: 9px;
+    text-decoration: none;
+}
+#sidebar .nav > .active > a, #sidebar .nav > .active:hover > a, #sidebar .nav > .active:focus > a {
+    background-color: transparent;
+    border-left: 2px solid #563d7c;
+    color: #563d7c;
+    font-weight: 700;
+    padding-left: 8px;
+}
+#sidebar .nav .nav > li > a:hover, #sidebar .nav .nav > li > a:focus {
+    padding-left: 19px;
+}
+#sidebar .nav .nav > .active > a, #sidebar .nav .nav > .active:hover > a, #sidebar .nav .nav > .active:focus > a {
+    font-weight: 500;
+    padding-left: 18px;
+}
+#sidebar .nav > .active > ul {
+    display: block;
+}
+
+#sidebar .nav .divider {
+    background-color: #e5e5e5;
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+}
+#sidebar .nav .nav .divider {
+	margin: 5px 5px 0 8px;
+}
+
+.table-striped > tbody > .colorgray {
+	background-color: #dcdcdc !important;
+	color: #dcdcdc;
+	background: #dcdcdc;
+}

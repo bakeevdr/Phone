@@ -1,0 +1,47 @@
+RewriteEngine On
+
+Options +Indexes
+Options +FollowSymLinks
+IndexOptions Charset=utf-8
+
+RewriteRule ^check_status.json$ check_status.json.php [L]
+
+<Files config*>
+  Order Deny,Allow
+  Deny from all
+</Files>
+
+<IfModule mod_gzip.c>
+  mod_gzip_on Yes
+  mod_gzip_dechunk Yes
+  mod_gzip_item_include file \.(html?|txt|css|js|php|pl)$ 
+  mod_gzip_item_include handler ^cgi-script$
+  mod_gzip_item_include mime ^text\.*
+  mod_gzip_item_include mime ^application/x-javascript.*
+  mod_gzip_item_exclude mime ^image\.*
+  mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.* 
+</IfModule>
+
+<files .htaccess="">
+  order allow,deny
+  deny from all
+</files>
+
+#Убираем расширение файла из URL
+RewriteRule ^(([^/]+/)*[^.]+)$ /$1.php
+
+#21. Защищаем сайт
+#Данный код позволяет защитить сайт от scripts enjection и нежелательных модификаций _REQUEST и/или GLOBALS:
+#Включаем отслеживание сим-ссылок
+Options +FollowSymLinks
+#Запускаем url_rewriting
+
+
+#Блокируем все ссылки, содержащие <script>
+RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+#Блокируем все скрипты, которые пытаются изменить переменные PHP Globals:
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+#Блокируем все скрипты, которые пытаются изменить переменную _REQUEST:
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+#Перенаправляем все подобные на страницу с ошибкой 403 — запрещено
+RewriteRule ^(.*)$ index.php [F,L]
