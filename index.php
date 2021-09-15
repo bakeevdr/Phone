@@ -47,12 +47,9 @@ require_once("messages.php");
 							require_once("pages" . _DS . $PageCurent . _DS . "control.php");
 							if (isset($DropDownMenu))
 								foreach ($DropDownMenu as $w)
-									echo "<li>" . $w . "</li>";
+									echo  $w;
 						};
 						?>
-						<li class="divider"></li>
-						<li><a href="files/docreguserad.pdf" download='Регламент регистрации пользователей в AD.pdf'>Регламент регистрации пользователей в AD</a></li>
-						<li><a href="changelog.htm">История изменений</a></li>
 					</ul>
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
