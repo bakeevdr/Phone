@@ -1,5 +1,5 @@
 <?php 
-	require_once("config.php");
+	require_once("config/0-config.php");
 	require_once("./ldaps.php");
 
 	$LDAPCurent	=	isset($_GET['LDAP'])?$_GET['LDAP']:(isset($_POST['LDAP'])?$_POST['LDAP']:(isset($_COOKIE['LDAP'])?$_COOKIE['LDAP']:null));
@@ -31,4 +31,3 @@
 	SetCookie("Page",$PageCurent);
 	
 	$LDAPCon=new LDAP($P_LDAP[$LDAPCurent]['Server'], $P_LDAP[$LDAPCurent]['User'], $P_LDAP[$LDAPCurent]['Pass']);
-?>
