@@ -170,7 +170,7 @@ class LDAP
 
 					if ($k1 == 'displayname') {
 						$LE[$k][$k1] = Trim($LE1[0]);
-						$LE[$k][$k1] = preg_replace("/^[^a-zа-яё-]+/ui", "", preg_replace("/[^a-zа-яё0-9\s-№]/ui", "", $LE[$k][$k1]));
+						$LE[$k][$k1] = preg_replace('/^[^a-zа-яё-]+/ui', '', preg_replace('/[^a-zа-яё0-9\s№-]/ui', '', $LE[$k][$k1]));
 						$LE[$k][$k1] = str_replace('№', '№ ', $LE[$k][$k1]);
 						$LE[$k][$k1] = str_replace('  ', ' ', $LE[$k][$k1]);
 					} elseif (($k1 == 'department') || ($k1 == 'title')) {

@@ -44,10 +44,8 @@ foreach ($P_LDAP as $P_LDAP_K => $P_LDAP_P) {
 			}
 			unset($LDAPCon);
 		}/**/
-
+		ob_end_clean();
     header ("Content-Type: application/octet-stream");
     header ("Content-Disposition: attachment; filename=TelPhone.csv");
     header ("Content-Length: " . strlen( $return ) ); 
 	Echo $return;
-	
-?>
