@@ -8,6 +8,10 @@ a {
     color: #333333;
 }
 
+a[href^="mailto:"] {
+    color: #23527c;
+}
+
 .navbar-AIS {
     background-color: #008000;
     border-color    : #080808;
