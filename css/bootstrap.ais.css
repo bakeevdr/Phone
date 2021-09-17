@@ -166,8 +166,25 @@ table>tbody>tr>td>a>span {
     margin: 5px 5px 0 8px;
 }
 
+/* 
 .table-striped>tbody>.colorgray {
     background-color: #dcdcdc !important;
     color           : #dcdcdc;
     background      : #dcdcdc;
 }
+
+.table-fixed-head th,
+.table-fixed-head td {
+    width: 33.333vw;
+}
+
+.table-fixed-head thead tr {
+    display: block;
+}
+
+.table-fixed-head tbody {
+    display : block;
+    overflow: auto;
+    width   : 100%;
+    height  : calc(100vh - 30px);
+} */

@@ -145,11 +145,13 @@ class LDAP
 			}
 			$LE = $this->NormaliseList($LE, $CurentParam);
 		} elseif ((!empty($this->Cache)) && $Cache) {
-			// $LE = $this->getCache($DN, $Attributes);
+			$LE = $this->getCache($DN, $Attributes);
 		} else
 			$LE = array();
 
 		// echo('<pre>'.var_export($LE,true).'</pre>');
+		//@file_put_contents('temp_test_data0.php', '<?php return ' . var_export($LE, true) . ' ;');
+		//$LE = require('temp_test_data.php');
 		return	$LE;
 	}
 
