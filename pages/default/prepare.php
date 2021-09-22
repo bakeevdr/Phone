@@ -215,6 +215,7 @@ if (!empty($P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['Managing'])) {
 		} else {
 			$ArrDepTree[$ArrDep2_key_t][$ArrDep2_key] = substr($ArrDep2_val, strpos($ArrDep2_val, '|@|') + 3, 200);
 		}
+		$ArrDepTree[$ArrDep2_key_t] = array_unique($ArrDepTree[$ArrDep2_key_t]);
 	}
 	unset($ArrDep2);
 } else {
