@@ -18,17 +18,19 @@ function TreeDep($ArrDep = [], &$Treeee = [])
 	global $ArrData;
 	foreach ($ArrDep as $ArrDep_K => $ArrDep_V) {
 		foreach ($ArrData as $AD_K => $AD_V) {
-			if (($ArrDep_V['manager'] == $AD_V['dn']) && ($ArrDep_V['department'] != $AD_V['department'])) {
+			if (!empty($ArrDep_V['manager'])) {
+				if (($ArrDep_V['manager'] == $AD_V['dn']) && ($ArrDep_V['department'] != $AD_V['department'])) {
 
-				if (empty($Treeee))
-					$Treeee = [$AD_V['department'] => [$ArrDep_V['department'] =>  ['!|@|' => $ArrDep]]];
-				else
-					$Treeee = [$AD_V['department'] => $Treeee];
-				if (!empty($AD_V['manager'])) {
-					TreeDep(array($AD_V), $Treeee);
+					if (empty($Treeee))
+						$Treeee = [$AD_V['department'] => [$ArrDep_V['department'] =>  ['!|@|' => $ArrDep]]];
+					else
+						$Treeee = [$AD_V['department'] => $Treeee];
+					if (!empty($AD_V['manager'])) {
+						TreeDep(array($AD_V), $Treeee);
+					}
+					$return = $Treeee;
+					break 2;
 				}
-				$return = $Treeee;
-				break 2;
 			}
 		}
 	}
@@ -68,7 +70,6 @@ function sortingARR(&$Arr = [])
 				global $P_SortPost;
 				$W1 = (isset($aval['title'])) ? array_keys($P_SortPost, $aval['title']) : array();
 				$W2 = (isset($bval['title'])) ? array_keys($P_SortPost, $bval['title']) : array();
-
 				if ((count($W1) != 0) && (Count($W2) != 0))
 					if ($W1[0] == $W2[0])	$res = 0;
 					else 					$res = ($W1[0] < $W2[0]) ? -1 : 1;
@@ -76,7 +77,9 @@ function sortingARR(&$Arr = [])
 					$res = -1;
 				elseif (count($W2) != 0)
 					$res = 1;
-
+				if (empty($res)) {
+					$res = ($aval['displayname'] < $bval['displayname']) ? -1 : 1;
+				}
 				return $res;
 			});
 		} else if (Count($Arr_V) >= 1) {
@@ -130,15 +133,15 @@ if (!isset($LDAPCurent)) {
 $PSplit_W =	isset($_GET['split']) ? $_GET['split'] : (isset($_POST['split']) ? $_POST['split'] : (isset($_COOKIE['split']) ? $_COOKIE['split'] : null));
 if (!isset($LDAPAttrShow))
 	$LDAPAttrShow = array(
-		'Param'	=> array("displayname",	'title', 		'mail', 	'telephonenumber',	 'ipphone', 'physicalDeliveryOfficeName'),
+		'Param'	=> array("displayname",	'title', 		'mail', 	'telephonenumber',	 'ipphone', 'physicaldeliveryofficename'),
 		'Name'	=> array("ФИО",			'Должность',	'E-Mail', 	'Городской тел',	'IP телефон', 'Кабинет'),
-		'PDF_W'	=> array(198,			225,			151,		95,					100),
+		'PDF_W'	=> array(198,			225,			151,		95,					100, 100),
 	);
 $LDAPAttrHide 	= array(
 	'department',
 	'objectguid',
 	'facsimileTelephoneNumber',
-	(!empty($P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['Managing']) ? 'manager' : ''),
+	'manager',
 	'objectclass',
 );
 
