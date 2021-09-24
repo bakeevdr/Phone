@@ -8,7 +8,7 @@ function html_show_DepTree($val = [], $lvl = 0)
 	foreach ($val as $val_K => $val_V) {
 		unset($val_V['!|@|']);
 		echo '<li><a href="#Group_' . md5($val_K . "-$lvl") . '">' . $val_K . '</a>';
-		if (Count($val_V) > 1) {
+		if (Count($val_V) >= 1) {
 			echo '<ul class="nav">';
 			html_show_DepTree($val_V, $lvl + 1);
 			echo '<li class="divider"></li></ul>';
