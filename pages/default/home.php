@@ -24,9 +24,9 @@ function html_show_listUser($val = [], $lvl = 0)
 	foreach ($val as $val_K => $val_V) {
 		if ($val_K != '!|@|') {
 			$class = (($lvl == 0 ? 'warning' : ($lvl == 1 ? 'success' : ($lvl == 2 ? 'info' : ''))));
-			echo '<tr id="Group_' . md5($val_K . "-$lvl") . '" class="' . $class . ' bs-docs-section">
+			echo '<tr class="' . $class . ' bs-docs-section">
 				<th colspan=7>'
-				. '<a href="#" OnClick=\'$("#Search").val("' . $val_K . '"); $("form").submit();\' style="text-decoration: none;">' . $val_K . '</a>' .
+				. '<a id="Group_' . md5($val_K . "-$lvl") . '" href="#" OnClick=\'$("#Search").val("' . $val_K . '"); $("form").submit();\' style="text-decoration: none;">' . $val_K . '</a>' .
 				'</th>
 			</tr>';
 			if (!empty($val_V['!|@|'])) {
@@ -146,8 +146,10 @@ function html_show_listUser($val = [], $lvl = 0)
 		};
 		$(window).resize(function() {
 			$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
+			$('.table tbody tr th a').css("padding-top", $(".table thead ").height() + 10);
 		});
 		$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
+		$('.table tbody tr th a').css("padding-top", $(".table thead ").height() + 10);
 	</script>
 
 </div>
