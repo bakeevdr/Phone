@@ -68,6 +68,11 @@ table>tbody>tr>td>a>span {
         inset 0 -1px 0 #dddddd;
 }
 
+.table tbody tr th a {
+    text-decoration: none;
+    padding        : 10px;
+}
+
 .table {
     border-collapse: collapse;
     width          : 100%;
