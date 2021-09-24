@@ -1,5 +1,22 @@
 <?php
 
+function filtered($List = array(), $Search = '', $fields = array())
+{
+	$return = array();
+	if ((!empty($List)) && (!empty($Search))) {
+		foreach ($List as $List_one) {
+			foreach ($fields as $Field_one) {
+				if ((!empty($List_one[$Field_one]))  && (!is_array($List_one[$Field_one]))) {
+					if (mb_stripos($List_one[$Field_one], $Search) !== false) {
+						$return[] = $List_one;
+						break;
+					};
+				};
+			};
+		};
+	} else $return = $List;
+	return	$return;
+}
 
 session_start();
 require_once("../../config/0-config.php");
@@ -17,13 +34,16 @@ empty($P_LDAP[$LDAPCurent]["FullNameDepartment"])  ? null : $LDAPCon->FullNameDe
 
 $ArrData	= $LDAPCon->getArray(
 	$P_LDAP[$LDAPCurent]['DC'],
-	"(objectguid=$LDAPSearch)",
+	$LDAPSearch,
 	array('objectguid'),
 	array(),
 	'',
 	$P_LDAP[$LDAPCurent]["OU"][$UnitCurent]
 );
 
+if ((!empty($ArrData)) &&  (!empty($LDAPSearch))) {
+	$ArrData = filtered($ArrData, $LDAPSearch, array('objectguid'));
+}
 $ArrData = $ArrData[0];
 $Photo = (isset($ArrData['jpegphoto']) ? $ArrData['jpegphoto'] : (isset($ArrData['thumbnailphoto']) ? $ArrData['thumbnailphoto'] :  'image/no_foto.jpg'));
 

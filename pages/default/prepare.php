@@ -1,7 +1,8 @@
 <?PHP
 
 function Get_LDAP_List($LDAP, $LDAPCurent)
-{			//Получение списка доменов из конфигураций
+{
+	//Получение списка доменов из конфигураций
 	$RT = "";
 	if (count($LDAP) > 1) {
 		foreach ($LDAP as $key => $value) {
@@ -12,117 +13,110 @@ function Get_LDAP_List($LDAP, $LDAPCurent)
 	return $RT;
 };
 
-function usort_Department($a, $b)
-{						// сортировка списка отделов
-	global $P_SortDep;
-	$res = 0;
-	$Q1 = array_keys($P_SortDep, $a);
-	$Q2 = array_keys($P_SortDep, $b);
-	if ((count($Q1) != 0) && (Count($Q2) != 0) && ($Q1[0] < $Q2[0]))
-		$res = -1;
-	elseif (count($Q2) != 0)
-		$res = 1;
-	elseif (count($Q1) == 0)
-		$res = strnatcmp($a, $b);
-	return $res;
-};
-
-function usort_DepartmentTitleDisplayNameCA($a, $b)
-{							// сортировка списка пользователей
-	global $P_SortDep;
-	global $P_SortPost;
-	global $P_SortPost_Add;
-	$SortPost = array_merge($P_SortPost, $P_SortPost_Add);
-	$res = 0;
-
-	$Q1 = array_keys($P_SortDep, $a['department']);
-	$Q2 = array_keys($P_SortDep, $b['department']);
-
-	if ((count($Q1) != 0) && (Count($Q2) != 0)) {
-		if ($Q1[0] == $Q2[0])	$res = 0;
-		else 					$res = ($Q1[0] < $Q2[0]) ? -1 : 1;
-	} elseif (count($Q1) != 0)
-		$res = -1;
-	elseif (count($Q2) != 0)
-		$res = 1;
-	else
-		$res = strnatcmp($a['department2'], $b['department2']);
-
-	if ($res == 0) {
-		$W1 = (isset($a['title'])) ? array_keys($SortPost, $a['title']) : array();
-		$W2 = (isset($b['title'])) ? array_keys($SortPost, $b['title']) : array();
-		if ((count($W1) != 0) && (Count($W2) != 0))
-			if ($W1[0] == $W2[0])	$res = 0;
-			else 					$res = ($W1[0] < $W2[0]) ? -1 : 1;
-		elseif (count($W1) != 0)
-			$res = -1;
-		elseif (count($W2) != 0)
-			$res = 1;
-	}/**/
-
-	if ($res == 0) {
-		$res = ($a['displayname'] < $b['displayname']) ? -1 : 1;
-	}/**/
-	return $res;
-};
-
-function usort_DepartmentTitleDisplayName($a, $b)
-{							// сортировка списка пользователей
-	global $P_SortDep;
-	global $P_SortPost;
-	global $P_SortPost_Add;
-	$SortPost = array_merge($P_SortPost, $P_SortPost_Add);
-
-	$res = 0;
-	/*		if (Empty($a['department'])) $a['department'] = '';
-		if (Empty($b['department'])) $b['department'] = '';/**/
-	$Q1 = array_keys($P_SortDep, $a['department']);
-	$Q2 = array_keys($P_SortDep, $b['department']);
-	if ((count($Q1) != 0) && (Count($Q2) != 0)) {
-		if ($Q1[0] == $Q2[0])	$res = 0;
-		else 					$res = ($Q1[0] < $Q2[0]) ? -1 : 1;
-	} elseif (count($Q1) != 0)
-		$res = -1;
-	elseif (count($Q2) != 0)
-		$res = 1;
-	else
-		$res = strnatcmp($a['department'], $b['department']);
-	if ($res == 0) {
-		$W1 = (isset($a['title'])) ? array_keys($SortPost, $a['title']) : array();
-		$W2 = (isset($b['title'])) ? array_keys($SortPost, $b['title']) : array();
-		if ((count($W1) != 0) && (Count($W2) != 0))
-			if ($W1[0] == $W2[0])	$res = 0;
-			else 					$res = ($W1[0] < $W2[0]) ? -1 : 1;
-		elseif (count($W1) != 0)
-			$res = -1;
-		elseif (count($W2) != 0)
-			$res = 1;
-	}/**/
-	if ($res == 0) {
-		$res = ($a['displayname'] < $b['displayname']) ? -1 : 1;
-	}/**/
-	return $res;
-};
-
-function filtered($List = array(), $Search = '', $fields = array())
+function TreeDep($ArrDep = [], &$Treeee = [])
 {
-	$return = array();
-	if ((!empty($List)) && (!empty($Search))) {
-		foreach ($List as $List_one) {
-			foreach ($fields as $Field_one) {
-				if ((!empty($List_one[$Field_one]))  && (!is_array($List_one[$Field_one]))) {
-					if (mb_stripos($List_one[$Field_one], $Search) !== false) {
-						$return[] = $List_one;
-						break;
-					};
-				};
-			};
-		};
-	} else $return = $List;
-	return	$return;
+	global $ArrData;
+	foreach ($ArrDep as $ArrDep_K => $ArrDep_V) {
+		foreach ($ArrData as $AD_K => $AD_V) {
+			if (($ArrDep_V['manager'] == $AD_V['dn']) && ($ArrDep_V['department'] != $AD_V['department'])) {
+
+				if (empty($Treeee))
+					$Treeee = [$AD_V['department'] => [$ArrDep_V['department'] =>  ['!|@|' => $ArrDep]]];
+				else
+					$Treeee = [$AD_V['department'] => $Treeee];
+				if (!empty($AD_V['manager'])) {
+					TreeDep(array($AD_V), $Treeee);
+				}
+				$return = $Treeee;
+				break 2;
+			}
+		}
+	}
+	if (empty($return)) {
+		$return = [
+			(current($ArrDep)['department']) => ['!|@|' => $ArrDep]
+		];  // для типа Руководства
+
+	}
+	/** */
+	return $return;
 }
 
+function sortingARR(&$Arr = [])
+{
+	uksort($Arr, function ($akey, $bkey) {
+		// Сортировка отделов
+		global $P_SortDep;
+		$Q1 = array_keys($P_SortDep, $akey);
+		$Q2 = array_keys($P_SortDep, $bkey);
+		if ((count($Q1) != 0) && (Count($Q2) != 0)) {
+			if ($Q1[0] == $Q2[0])	$res = 0;
+			else 					$res = ($Q1[0] < $Q2[0]) ? -1 : 1;
+		} elseif (count($Q1) != 0)
+			$res = -1;
+		elseif (count($Q2) != 0)
+			$res = 1;
+		else
+			$res = strnatcmp($akey, $bkey);
 
+		return $res;
+	});
+	foreach ($Arr as $Arr_K => $Arr_V) {
+		if ($Arr_K == '!|@|') {
+			usort($Arr[$Arr_K], function ($aval, $bval) {
+				//сортировка по должности
+				global $P_SortPost;
+				$W1 = (isset($aval['title'])) ? array_keys($P_SortPost, $aval['title']) : array();
+				$W2 = (isset($bval['title'])) ? array_keys($P_SortPost, $bval['title']) : array();
+
+				if ((count($W1) != 0) && (Count($W2) != 0))
+					if ($W1[0] == $W2[0])	$res = 0;
+					else 					$res = ($W1[0] < $W2[0]) ? -1 : 1;
+				elseif (count($W1) != 0)
+					$res = -1;
+				elseif (count($W2) != 0)
+					$res = 1;
+
+				return $res;
+			});
+		} else if (Count($Arr_V) >= 1) {
+			sortingARR($Arr[$Arr_K]);
+		}
+	}
+}
+
+function filtered(&$List = array(), $Search = '', $fields = array())
+{
+	foreach ($List as $List_K => $List_V) {
+		if (Count($List_V) >= 1) {
+			if ($List_K == '!|@|') {
+
+				foreach ($List_V as $LU_K => $LU_V) {
+					$find = false;
+					foreach ($fields as $Field_one) {
+						if ((!empty($LU_V[$Field_one]))  && (!is_array($LU_V[$Field_one]))) {
+							if (mb_stripos($LU_V[$Field_one], $Search) !== false) {
+								$find = true;
+								break;
+							};
+						};
+					};
+					if (!$find) {
+						unset($List['!|@|'][$LU_K]);
+					}
+				};
+				if (Count($List['!|@|']) == 0) {
+					unset($List['!|@|']);
+				}
+			} else {
+				filtered($List[$List_K], $Search, $fields);
+				if (Count($List[$List_K]) == 0) {
+					unset($List[$List_K]);
+				}
+			}
+		}
+	}
+}
 
 if (!isset($LDAPCurent)) {
 	require_once("../../config/0-config.php");
@@ -136,8 +130,8 @@ if (!isset($LDAPCurent)) {
 $PSplit_W =	isset($_GET['split']) ? $_GET['split'] : (isset($_POST['split']) ? $_POST['split'] : (isset($_COOKIE['split']) ? $_COOKIE['split'] : null));
 if (!isset($LDAPAttrShow))
 	$LDAPAttrShow = array(
-		'Param'	=> array("displayname",	'title', 		'mail', 	'telephonenumber',	 'ipphone'),
-		'Name'	=> array("ФИО",			'Должность',	'E-Mail', 	'Городской тел',	'IP телефон'),
+		'Param'	=> array("displayname",	'title', 		'mail', 	'telephonenumber',	 'ipphone', 'physicalDeliveryOfficeName'),
+		'Name'	=> array("ФИО",			'Должность',	'E-Mail', 	'Городской тел',	'IP телефон', 'Кабинет'),
 		'PDF_W'	=> array(198,			225,			151,		95,					100),
 	);
 $LDAPAttrHide 	= array(
@@ -152,7 +146,7 @@ $LDAPAttrHide 	= array(
 empty($P_LDAP[$LDAPCurent]["FullNameDepartment"])  ? null : $LDAPCon->FullNameDepartment = $P_LDAP[$LDAPCurent]["FullNameDepartment"];
 $ArrData	= $LDAPCon->getArray(
 	(($UnitCurent == '0') ? '' : "OU=$UnitCurent, ") . $P_LDAP[$LDAPCurent]['DC'],
-	$Search,
+	null,
 	array_merge($LDAPAttrShow['Param'], array('department', 'streetaddress', 'physicaldeliveryofficename')),
 	array_merge($LDAPAttrShow['Param'], $LDAPAttrHide),
 	$LDAPAttrHide[0],
@@ -161,83 +155,25 @@ $ArrData	= $LDAPCon->getArray(
 
 $FilterFolder = array_merge($LDAPAttrShow['Param'], array('department', 'streetaddress', 'physicaldeliveryofficename'));
 
-$LE_FULL = $ArrData;
+$ArrData_new = array();
+//Группируем всех сотрудников по отделам 
 foreach ($ArrData as $Key => $Value) {
-	$ArrData[$Key]['department2'] = $Value['department'];
-	if (mb_stripos($Value['department'], 'управление') === false) {
-		if (!empty($Value['manager'])) {
-			foreach ($LE_FULL as $Value2) {
-				if (@$Value2['dn'] === $Value['manager']) {
-					if (mb_stripos($Value2['department'], 'руководство') === false)
-						$ArrData[$Key]['department2'] = $Value2['department'] . '2|@|' . $Value['department'];
-					else
-						$ArrData[$Key]['department2'] = $Value['department'] . '2|@|' . $Value['department'];
-				}
-			}
-		} else
-			$ArrData[$Key]['department2'] = $Value['department'] . '2|@|' . $Value['department'];
-	} else
-		$ArrData[$Key]['department2'] = $Value['department'] . '2|@|' . $Value['department'];
+	if (empty($ArrData_new[$Value['department']]))
+		$ArrData_new[$Value['department']] = [];
+	$ArrData_new[$Value['department']][$Value['displayname']] = $Value;
+};
+//строим дерево подчинения отделов по менеджеру
+$ArrData_new2 = array();
+foreach ($ArrData_new as $ADN_K => $ADN_V) {
+	$TreeDep = TreeDep($ADN_V);
+	if (!empty($TreeDep))
+		$ArrData_new2 = array_replace_recursive($ArrData_new2, $TreeDep);
 }
 
-if ((!empty($ArrData)) &&  (!empty($Search))) {
-	$ArrData = filtered($ArrData, $Search, $FilterFolder);
+// Фильтрация если был запущен поиск 
+if (!empty($Search)) {
+	filtered($ArrData_new2, $Search, $FilterFolder);
 }
 
-if (!empty($P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['Managing'])) {
-	/*foreach($ArrData AS $Key=>$Value) 
-			$ArrData[$Key]['department'] = $ArrData[$Key]['department2'];		/**/
-	if (empty($P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['NoSort']))
-		usort($ArrData, 'usort_DepartmentTitleDisplayNameCA');
-} else {
-	usort($ArrData, 'usort_DepartmentTitleDisplayName');
-}
-
-// Получаем список отделов
-$ArrDep = array();
-foreach ($ArrData as $key) {
-	$ArrDep[] =	substr($key['department2'], 0, strpos($key['department2'], '|@|') - 1);
-	$ArrDep[] =	$key['department'];
-}
-$ArrDep = array_unique($ArrDep);
-$ArrDepTree = array();
-if (!empty($P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['Managing'])) {
-	$ArrDep2 = array();
-	foreach ($ArrData as $key) {
-		$ArrDep2[] = substr($key['department2'], 0, strpos($key['department2'], '|@|') - 1) . '2|@|' . substr($key['department2'], 0, strpos($key['department2'], '|@|') - 1);
-		$ArrDep2[] =	$key['department2'];
-	}
-	$ArrDep2 = array_unique($ArrDep2);
-	foreach ($ArrDep2 as $ArrDep2_key => $ArrDep2_val) {
-		if (substr($ArrDep2_val, 0, strpos($ArrDep2_val, '|@|') - 1) === @$ArrDep[$ArrDep2_key]) {
-			$ArrDep2_key_t = $ArrDep2_key;
-			$ArrDepTree[$ArrDep2_key_t]['name'] = substr($ArrDep2_val, strpos($ArrDep2_val, '|@|') + 3, 200);
-		} else {
-			$ArrDepTree[$ArrDep2_key_t][$ArrDep2_key] = substr($ArrDep2_val, strpos($ArrDep2_val, '|@|') + 3, 200);
-		}
-		$ArrDepTree[$ArrDep2_key_t] = array_unique($ArrDepTree[$ArrDep2_key_t]);
-	}
-	unset($ArrDep2);
-} else {
-	foreach ($ArrDep as $ArrDep_key => $ArrDep_val)
-		$ArrDepTree[$ArrDep_key]['name'] = $ArrDep_val;
-}
-//Echo '<pre>' . var_export($ArrDep,true) . '</pre>';
-//Echo '<pre>' . var_export($ArrDepTree,true) . '</pre>';
-//usort($ArrDep,'usort_Department');/**/
-
-// Удаляем пустые столбцы
-foreach ($LDAPAttrShow['Param'] as $LDAPAS_K => $LDAPAS) {
-	$DelCol = True;
-	foreach ($ArrData as $key) {
-		if (!empty($key[$LDAPAS])) {
-			$DelCol = false;
-			break;
-		}
-	};
-	if ($DelCol === True) {
-		unset($LDAPAttrShow['Param'][$LDAPAS_K]);
-		unset($LDAPAttrShow['Name'][$LDAPAS_K]);
-		unset($LDAPAttrShow['PDF_W'][$LDAPAS_K]);
-	}
-};/**/
+// Сортировка отделов и сотрудников
+sortingARR($ArrData_new2);

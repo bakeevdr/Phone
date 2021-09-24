@@ -1,22 +1,70 @@
 <?PHP
 require('prepare.php');
+
+
+function html_show_DepTree($val = [], $lvl = 0)
+{
+	unset($val['!|@|']);
+	foreach ($val as $val_K => $val_V) {
+		unset($val_V['!|@|']);
+		echo '<li><a href="#Group_' . md5($val_K . "-$lvl") . '">' . $val_K . '</a>';
+		if (Count($val_V) > 1) {
+			echo '<ul class="nav">';
+			html_show_DepTree($val_V, $lvl + 1);
+			echo '<li class="divider"></li></ul>';
+		}
+		echo '</li>';
+	}
+}
+
+function html_show_listUser($val = [], $lvl = 0)
+{
+	global $LDAPAttrShow;
+	global $PageCurent, $LDAPCurent, $UnitCurent;
+	foreach ($val as $val_K => $val_V) {
+		if ($val_K != '!|@|') {
+			$class = (($lvl == 0 ? 'warning' : ($lvl == 1 ? 'success' : ($lvl == 2 ? 'info' : ''))));
+			echo '<tr id="Group_' . md5($val_K . "-$lvl") . '" class="' . $class . ' bs-docs-section">
+				<th colspan=7>'
+				. '<a href="#" OnClick=\'$("#Search").val("' . $val_K . '"); $("form").submit();\' style="text-decoration: none;">' . $val_K . '</a>' .
+				'</th>
+			</tr>';
+			if (!empty($val_V['!|@|'])) {
+				foreach ($val_V['!|@|'] as $val_K_K =>  $w) {
+					if ($w['displayname'] !== $w['department']) {
+						if (empty($w['displayname'])) echo '<tr class ="colorgray">';
+						else echo '<tr>';
+						foreach ($LDAPAttrShow['Param'] as $a) {
+							if ((isset($w[$a])) && ($w[$a] != '')) {
+								if ($a == 'displayname') {
+									echo '<td><a onclick="ShowUserModal(this)"  href="" data-toggle="modal" data-target="#modal-windows" data-text="pages/' . $PageCurent . '/details.php?ID=' . urlencode(base64_encode(urlencode(utf8_encode(implode("||||", array($LDAPCurent, $UnitCurent, $w['objectguid'])))))) . '"><span>' .
+										SubStr($w[$a], 0, StrPos($w[$a], ' ')) . '</span></br><span>' . SubStr($w[$a], StrPos($w[$a], ' '), 100) . '</span></a></td>';
+								} elseif ($a == 'mail')
+									echo '<td> <a href="mailto:' . $w[$a] . '">' . $w[$a] . '</a></td>';
+								elseif (($a == 'telephonenumber') or ($a == 'pager') or ($a == 'ipphone'))
+									echo '<td>' . str_replace('/', '<br>', $w[$a]) . '</td>';
+								else
+									echo '<td>' . $w[$a] . '</td>';
+							} else
+								echo '<td>-</td>';
+						};
+						echo '</tr>';
+					}
+				}
+			}
+			html_show_listUser($val_V, $lvl + 1);
+		}
+	}
+};
+
 ?>
 <div id="main">
 	<div id="sidebar" style='<?php echo isset($PSplit_W) ? 'width: ' . $PSplit_W . 'px;' : ''; ?>'>
 		<ul class="nav">
 			<?php
-			foreach ($ArrDepTree as $ArrDepTree_id => $ArrDepTree_val) {
-				echo '<li><a href="#Group_' . $ArrDepTree_id . '">' . $ArrDepTree_val['name'] . '</a>';
-				if (Count($ArrDepTree_val) > 1) {
-					echo '<ul class="nav">';
-					foreach ($ArrDepTree_val as $ArrDepTree_val_id => $ArrDepTree_val_val) {
-						if ($ArrDepTree_val_id != 'name')
-							echo '<li><a href="#Group_' . $ArrDepTree_val_id . '">' . $ArrDepTree_val_val . '</a></li>';
-					}
-					echo '<li class="divider"></li></ul>';
-				}
-				echo '</li>';
-			}
+
+			html_show_DepTree([key($ArrData_new2) => []]);
+			html_show_DepTree($ArrData_new2[key($ArrData_new2)], 1);
 			?>
 			<li class="divider"></li>
 		</ul>
@@ -41,67 +89,7 @@ require('prepare.php');
 			</thead>
 			<tbody>
 				<?php
-				$Group = '';
-				$Group_parent = '';
-				foreach ($ArrData as $w) {
-					$DepN = array_keys($ArrDep, $w['department'])[0];
-					if ($Group != $w['department']) {
-						$Group = $w['department'];
-						if (
-							isset($w['department2']) &&
-							(
-								($P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['Managing'] == True)
-								&& (
-									(mb_stripos($w['department'], 'управление') !== false)
-									||
-									(Trim(mb_substr($w['department2'], 0, mb_stripos($w['department2'], '|@|') - 1)) == mb_substr($w['department2'], mb_stripos($w['department2'], '|@|') + 3, 500))
-									||
-									($Group_parent !== mb_substr($w['department2'], 0, mb_stripos($w['department2'], '|@|') - 1))))
-						) {
-							$Group_parent = mb_substr($w['department2'], 0, mb_stripos($w['department2'], '|@|') - 1);
-							echo '	<tr id="Group_' . array_keys($ArrDep, $Group_parent)[0] . '" class="success bs-docs-section">
-										<th colspan=7>'
-								. $Group_parent .
-								'</th>
-									</tr>';
-						};/**/
-						if (
-							(
-								(mb_stripos($w['department'], 'управление') == false) &&
-								(Trim(mb_substr($w['department2'], 0, mb_stripos($w['department2'], '|@|') - 1)) !== mb_substr($w['department2'], mb_stripos($w['department2'], '|@|') + 3, 500)))
-							||
-							$P_LDAP[$LDAPCurent]["OU"][$UnitCurent]['Managing'] !== true
-						) {
-							echo '<tr id="Group_' . $DepN . '" class ="info bs-docs-section"><th colspan=7><a href="#" OnClick=\'$("#Search").val("' . $w['department'] . '"); $("form").submit();\' style="text-decoration: none;">' . $w['department'] . '</a>';
-							if ($w['displayname'] === $w['department']) {
-								echo	'<br><br>'	. ((!empty($w['mail']))						? ' Почтовый ящик: ' . $w['mail'] .					((!empty($w['telephonenumber']))			? ',  &nbsp;  &nbsp; ' : '')	: ((!empty($w['telephonenumber']))			? ',  &nbsp;  &nbsp; ' : ''))
-									. ((!empty($w['telephonenumber']))			? ' Городской телефон: ' . $w['telephonenumber'] .	((!empty($w['facsimiletelephonenumber']))	? ',  &nbsp;  &nbsp; ' : '')	: ((!empty($w['facsimileTelephoneNumber']))	? ',  &nbsp;  &nbsp; ' : ''))
-									. ((!empty($w['facsimiletelephonenumber']))	? ' Факс: ' . $w['facsimiletelephonenumber'] .		((!empty($w['ipphone']))					? ',  &nbsp;  &nbsp; ' : '')	: ((!empty($w['ipphone']))					? ',  &nbsp;  &nbsp; ' : ''))
-									. ((!empty($w['ipphone']))					? ' IP телефон: ' . $w['ipphone']																					: '');
-							}
-							echo '</th></tr>';/**/
-						}
-					};
-					if ($w['displayname'] !== $w['department']) {
-						if (empty($w['displayname'])) echo '<tr class ="colorgray">';
-						else echo '<tr>';
-						foreach ($LDAPAttrShow['Param'] as $a) {
-							if ((isset($w[$a])) && ($w[$a] != '')) {
-								if ($a == 'displayname') {
-									echo '<td><a onclick="ShowUserModal(this)"  href="" data-toggle="modal" data-target="#modal-windows" data-text="pages/' . $PageCurent . '/details.php?ID=' . urlencode(base64_encode(urlencode(utf8_encode(implode("||||", array($LDAPCurent, $UnitCurent, $w['objectguid'])))))) . '"><span>' .
-										SubStr($w[$a], 0, StrPos($w[$a], ' ')) . '</span></br><span>' . SubStr($w[$a], StrPos($w[$a], ' '), 100) . '</span></a></td>';
-								} elseif ($a == 'mail')
-									echo '<td> <a href="mailto:' . $w[$a] . '">' . $w[$a] . '</a></td>';
-								elseif (($a == 'telephonenumber') or ($a == 'pager') or ($a == 'ipphone'))
-									echo '<td>' . str_replace('/', '<br>', $w[$a]) . '</td>';
-								else
-									echo '<td>' . $w[$a] . '</td>';
-							} else
-								echo '<td>-</td>';
-						};
-						echo '</tr>';
-					}
-				};
+				html_show_listUser($ArrData_new2);
 				?>
 			</tbody>
 		</table>

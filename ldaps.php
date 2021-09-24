@@ -102,7 +102,7 @@ class LDAP
 		return implode(" / ", $Result);
 	}
 
-	function getArray($DN, $Search, $FilterFolder, $Attributes, $Sort1 = '', $CurentParam, $Cache = true)
+	function getArray($DN, $Filter, $FilterFolder, $Attributes, $Sort1 = '', $CurentParam, $Cache = true)
 	{
 		//var_export($this->FullNameDepartment);
 		if (empty($this->Err) && empty($this->Cache) /**/) {
@@ -123,7 +123,7 @@ class LDAP
 				$LS	=	ldap_search(
 					$this->LC,
 					$DN,
-					"(&(objectCategory=person)(!(useraccountcontrol:1.2.840.113556.1.4.803:=2))(!(useraccountcontrol:1.2.840.113556.1.4.803:=16))(!(description=@*)))",
+					"(&$Filter(objectCategory=person)(!(useraccountcontrol:1.2.840.113556.1.4.803:=2))(!(useraccountcontrol:1.2.840.113556.1.4.803:=16))(!(description=@*)))",
 					$Attributes
 				);
 				$LE = array_merge($LE, ldap_get_entries($this->LC, $LS));
