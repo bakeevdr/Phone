@@ -72,7 +72,7 @@ function html_show_listUser($val = [], $lvl = 0)
 	<div id="split-bar">
 		<div></div>
 	</div>
-	<div ID="content" class="content" data-spy="scroll" data-target="#sidebar">
+	<div ID="content" class="content tableFixHead " data-spy="scroll" data-target="#sidebar">
 		<?php
 		if (empty($ArrData)) {
 			if (isset($LDAPCon->Err)) {
@@ -94,60 +94,60 @@ function html_show_listUser($val = [], $lvl = 0)
 			</tbody>
 		</table>
 		<?php ?>
-
-		<a href="#" id="goTop" class="btn btn-default " style="position: fixed; bottom: 20px; right: 20px; opacity: 1; cursor: pointer;">
-			<span class="glyphicon glyphicon glyphicon-arrow-up"></span>
-		</a>
-
-		<script type="text/javascript">
-			$('#goTop').click(function() {
-				$('#content').animate({
-					scrollTop: 0
-				}, 500);
-				return false;
-			})
-
-			var split_min = 200;
-			var split_max = 3600;
-			var split_mainmin = 800;
-
-			$('#split-bar').mousedown(function(e) {
-				e.preventDefault();
-				$(document).mousemove(function(e) {
-					e.preventDefault();
-					var x = e.pageX - $('#sidebar').offset().left;
-					if (x > split_min && x < split_max && e.pageX < ($(window).width() - split_mainmin)) {
-						x = x - 6;
-						$('#sidebar').css("width", x);
-					}
-				})
-			});
-			$(document).mouseup(function(e) {
-				document.cookie = "split=" + ($('#split-bar').offset().left - 5);
-				$(document).unbind('mousemove');
-			});
-
-			function ShowUserModal(qrg) {
-				$.ajax({
-					type: 'POST',
-					url: $(qrg).data("text"),
-					beforeSend: function() {
-						$("#modal-windows #modal-label").html('Информация о сотруднике');
-						$("#modal-windows .modal-dialog").addClass('modal-lg');
-						$("#result").html('Загрузка .....');
-					},
-					success: function(data) {
-						$("#result").html(data);
-					},
-					error: function(data) {
-						$("#result").html('Ошибка загрузки');
-					}
-				});
-			};
-			$(window).resize(function() {
-				$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
-			});
-			$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
-		</script>
 	</div>
+	<a href="#" id="goTop" class="btn btn-default " style="position: fixed; bottom: 20px; right: 20px; opacity: 1; cursor: pointer;">
+		<span class="glyphicon glyphicon glyphicon-arrow-up"></span>
+	</a>
+
+	<script type="text/javascript">
+		$('#goTop').click(function() {
+			$('#content').animate({
+				scrollTop: 0
+			}, 500);
+			return false;
+		})
+
+		var split_min = 200;
+		var split_max = 3600;
+		var split_mainmin = 800;
+
+		$('#split-bar').mousedown(function(e) {
+			e.preventDefault();
+			$(document).mousemove(function(e) {
+				e.preventDefault();
+				var x = e.pageX - $('#sidebar').offset().left;
+				if (x > split_min && x < split_max && e.pageX < ($(window).width() - split_mainmin)) {
+					x = x - 6;
+					$('#sidebar').css("width", x);
+				}
+			})
+		});
+		$(document).mouseup(function(e) {
+			document.cookie = "split=" + ($('#split-bar').offset().left - 5);
+			$(document).unbind('mousemove');
+		});
+
+		function ShowUserModal(qrg) {
+			$.ajax({
+				type: 'POST',
+				url: $(qrg).data("text"),
+				beforeSend: function() {
+					$("#modal-windows #modal-label").html('Информация о сотруднике');
+					$("#modal-windows .modal-dialog").addClass('modal-lg');
+					$("#result").html('Загрузка .....');
+				},
+				success: function(data) {
+					$("#result").html(data);
+				},
+				error: function(data) {
+					$("#result").html('Ошибка загрузки');
+				}
+			});
+		};
+		$(window).resize(function() {
+			$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
+		});
+		$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
+	</script>
+
 </div>

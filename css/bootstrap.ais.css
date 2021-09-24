@@ -58,6 +58,20 @@ table>tbody>tr>td>a>span {
     text-align: left;
 }
 
+.tableFixHead thead th {
+    position        : sticky;
+    top             : 0;
+    z-index         : 1;
+    background-color: #ffffff;
+    border-bottom   : none !important;
+    box-shadow      :
+        inset 0 -1px 0 #dddddd;
+}
+
+.table {
+    border-collapse: collapse;
+    width          : 100%;
+}
 
 
 #main {
@@ -165,26 +179,3 @@ table>tbody>tr>td>a>span {
 #sidebar .nav .nav .divider {
     margin: 5px 5px 0 8px;
 }
-
-/* 
-.table-striped>tbody>.colorgray {
-    background-color: #dcdcdc !important;
-    color           : #dcdcdc;
-    background      : #dcdcdc;
-}
-
-.table-fixed-head th,
-.table-fixed-head td {
-    width: 33.333vw;
-}
-
-.table-fixed-head thead tr {
-    display: block;
-}
-
-.table-fixed-head tbody {
-    display : block;
-    overflow: auto;
-    width   : 100%;
-    height  : calc(100vh - 30px);
-} */
