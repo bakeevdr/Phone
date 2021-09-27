@@ -37,7 +37,7 @@ function html_show_listUser($val = [], $lvl = 0)
 						else echo '<tr>';
 						foreach ($LDAPAttrShow['Param'] as $b => $a) {
 							echo '<td>';
-							if (($b == 0) && ($val_K_K == 0)) echo '<span id="Group_' . md5($val_K . "-$lvl") . '"> </span>';
+							if (($b == 0) && ($val_K_K == 0)) echo '<span class="GroupID" id="Group_' . md5($val_K . "-$lvl") . '"> </span>';
 							if ((isset($w[$a])) && ($w[$a] != '')) {
 								if ($a == 'displayname') {
 									echo '<a onclick="ShowUserModal(this)"  href="" data-toggle="modal" data-target="#modal-windows" data-text="pages/' . $PageCurent . '/details.php?ID=' . urlencode(base64_encode(urlencode(utf8_encode(implode("||||", array($LDAPCurent, $UnitCurent, $w['objectguid'])))))) . '"><span>' .
@@ -150,11 +150,11 @@ function html_show_listUser($val = [], $lvl = 0)
 		};
 		$(window).resize(function() {
 			$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
-			$('.table tbody tr span').css("padding-top", $(".table thead ").height() + 35);
+			$('.table tbody .GroupID').css("padding-top", $(".table thead ").height() + 35);
 			$('.table tbody th').css("top", $(".table thead ").height() - 1);
 		});
 		$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
-		$('.table tbody tr span').css("padding-top", $(".table thead ").height() + 35);
+		$('.table tbody .GroupID').css("padding-top", $(".table thead ").height() + 35);
 		$('.table tbody th').css("top", $(".table thead ").height() - 1);
 	</script>
 
