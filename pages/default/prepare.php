@@ -22,7 +22,7 @@ function TreeDep($ArrDep = [], &$Treeee = [])
 				if (($ArrDep_V['manager'] == $AD_V['dn']) && ($ArrDep_V['department'] != $AD_V['department'])) {
 
 					if (empty($Treeee))
-						$Treeee = [$AD_V['department'] => [$ArrDep_V['department'] =>  ['!|@|' => $ArrDep]]];
+						$Treeee = [$AD_V['department'] => [$ArrDep_V['department'] =>  ['|@|' => $ArrDep]]];
 					else
 						$Treeee = [$AD_V['department'] => $Treeee];
 					if (!empty($AD_V['manager'])) {
@@ -36,7 +36,7 @@ function TreeDep($ArrDep = [], &$Treeee = [])
 	}
 	if (empty($return)) {
 		$return = [
-			(current($ArrDep)['department']) => ['!|@|' => $ArrDep]
+			(current($ArrDep)['department']) => ['|@|' => $ArrDep]
 		];  // для типа Руководства
 
 	}
@@ -49,8 +49,9 @@ function sortingARR(&$Arr = [])
 	uksort($Arr, function ($akey, $bkey) {
 		// Сортировка отделов
 		global $P_SortDep;
-		$Q1 = array_keys($P_SortDep, $akey);
-		$Q2 = array_keys($P_SortDep, $bkey);
+		$SortDep = array_merge(['|@|'], $P_SortDep);
+		$Q1 = array_keys($SortDep, $akey);
+		$Q2 = array_keys($SortDep, $bkey);
 		if ((count($Q1) != 0) && (Count($Q2) != 0)) {
 			if ($Q1[0] == $Q2[0])	$res = 0;
 			else 					$res = ($Q1[0] < $Q2[0]) ? -1 : 1;
@@ -64,7 +65,7 @@ function sortingARR(&$Arr = [])
 		return $res;
 	});
 	foreach ($Arr as $Arr_K => $Arr_V) {
-		if ($Arr_K == '!|@|') {
+		if ($Arr_K == '|@|') {
 			usort($Arr[$Arr_K], function ($aval, $bval) {
 				//сортировка по должности
 				global $P_SortPost;
@@ -92,7 +93,7 @@ function filtered(&$List = array(), $Search = '', $fields = array())
 {
 	foreach ($List as $List_K => $List_V) {
 		if (Count($List_V) >= 1) {
-			if ($List_K == '!|@|') {
+			if ($List_K == '|@|') {
 
 				foreach ($List_V as $LU_K => $LU_V) {
 					$find = false;
@@ -105,11 +106,11 @@ function filtered(&$List = array(), $Search = '', $fields = array())
 						};
 					};
 					if (!$find) {
-						unset($List['!|@|'][$LU_K]);
+						unset($List['|@|'][$LU_K]);
 					}
 				};
-				if (Count($List['!|@|']) == 0) {
-					unset($List['!|@|']);
+				if (Count($List['|@|']) == 0) {
+					unset($List['|@|']);
 				}
 			} else {
 				filtered($List[$List_K], $Search, $fields);

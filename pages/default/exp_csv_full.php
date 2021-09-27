@@ -18,9 +18,9 @@ function PrepareCSV($val = [])
 	global $LDAPAttrShow;
 	$return = '';
 	foreach ($val as $val_K => $val_V) {
-		if ($val_K != '!|@|') {
-			if (!empty($val_V['!|@|'])) {
-				foreach ($val_V['!|@|'] as $val_K_K =>  $w) {
+		if ($val_K != '|@|') {
+			if (!empty($val_V['|@|'])) {
+				foreach ($val_V['|@|'] as $val_K_K =>  $w) {
 					$return	.= 	iconv('utf-8', 'windows-1251', $w['department']) . ";";
 					foreach ($LDAPAttrShow['Param'] as $a)
 						if (isset($w[$a]))

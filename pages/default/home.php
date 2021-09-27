@@ -4,9 +4,9 @@ require('prepare.php');
 
 function html_show_DepTree($val = [], $lvl = 0)
 {
-	unset($val['!|@|']);
+	unset($val['|@|']);
 	foreach ($val as $val_K => $val_V) {
-		unset($val_V['!|@|']);
+		unset($val_V['|@|']);
 		echo '<li><a href="#Group_' . md5($val_K . "-$lvl") . '">' . $val_K . '</a>';
 		if (Count($val_V) >= 1) {
 			echo '<ul class="nav">';
@@ -22,7 +22,7 @@ function html_show_listUser($val = [], $lvl = 0)
 	global $LDAPAttrShow;
 	global $PageCurent, $LDAPCurent, $UnitCurent;
 	foreach ($val as $val_K => $val_V) {
-		if ($val_K != '!|@|') {
+		if ($val_K != '|@|') {
 			$class = (($lvl == 0 ? 'warning' : ($lvl == 1 ? 'success' : ($lvl == 2 ? 'info' : ''))));
 			echo '<tr class="' . $class . ' bs-docs-section">
 				<th colspan=7>'
@@ -30,8 +30,8 @@ function html_show_listUser($val = [], $lvl = 0)
 				. '<a  href="#" OnClick=\'$("#Search").val("' . $val_K . '"); $("form").submit();\' >' . $val_K . '</a>' .
 				'</th>
 			</tr>';
-			if (!empty($val_V['!|@|'])) {
-				foreach ($val_V['!|@|'] as $val_K_K =>  $w) {
+			if (!empty($val_V['|@|'])) {
+				foreach ($val_V['|@|'] as $val_K_K =>  $w) {
 					if ($w['displayname'] !== $w['department']) {
 						if (empty($w['displayname'])) echo '<tr class ="colorgray">';
 						else echo '<tr>';
