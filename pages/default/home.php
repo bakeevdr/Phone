@@ -25,8 +25,7 @@ function html_show_listUser($val = [], $lvl = 0)
 		if ($val_K != '!|@|') {
 			$class = (($lvl == 0 ? 'warning' : ($lvl == 1 ? 'success' : ($lvl == 2 ? 'info' : ''))));
 			echo '<tr class="' . $class . ' bs-docs-section">
-				<th colspan=7>
-				<span id="Group_' . md5($val_K . "-$lvl") . '"> </span>'
+				<th colspan=7>'
 
 				. '<a  href="#" OnClick=\'$("#Search").val("' . $val_K . '"); $("form").submit();\' >' . $val_K . '</a>' .
 				'</th>
@@ -36,19 +35,22 @@ function html_show_listUser($val = [], $lvl = 0)
 					if ($w['displayname'] !== $w['department']) {
 						if (empty($w['displayname'])) echo '<tr class ="colorgray">';
 						else echo '<tr>';
-						foreach ($LDAPAttrShow['Param'] as $a) {
+						foreach ($LDAPAttrShow['Param'] as $b => $a) {
+							echo '<td>';
+							if (($b == 0) && ($val_K_K == 0)) echo '<span id="Group_' . md5($val_K . "-$lvl") . '"> </span>';
 							if ((isset($w[$a])) && ($w[$a] != '')) {
 								if ($a == 'displayname') {
-									echo '<td><a onclick="ShowUserModal(this)"  href="" data-toggle="modal" data-target="#modal-windows" data-text="pages/' . $PageCurent . '/details.php?ID=' . urlencode(base64_encode(urlencode(utf8_encode(implode("||||", array($LDAPCurent, $UnitCurent, $w['objectguid'])))))) . '"><span>' .
-										SubStr($w[$a], 0, StrPos($w[$a], ' ')) . '</span></br><span>' . SubStr($w[$a], StrPos($w[$a], ' '), 100) . '</span></a></td>';
+									echo '<a onclick="ShowUserModal(this)"  href="" data-toggle="modal" data-target="#modal-windows" data-text="pages/' . $PageCurent . '/details.php?ID=' . urlencode(base64_encode(urlencode(utf8_encode(implode("||||", array($LDAPCurent, $UnitCurent, $w['objectguid'])))))) . '"><span>' .
+										SubStr($w[$a], 0, StrPos($w[$a], ' ')) . '</span></br><span>' . SubStr($w[$a], StrPos($w[$a], ' '), 100) . '</span></a>';
 								} elseif ($a == 'mail')
-									echo '<td> <a href="mailto:' . $w[$a] . '">' . $w[$a] . '</a></td>';
+									echo '<a href="mailto:' . $w[$a] . '">' . $w[$a] . '</a>';
 								elseif (($a == 'telephonenumber') or ($a == 'pager') or ($a == 'ipphone'))
-									echo '<td>' . str_replace('/', '<br>', $w[$a]) . '</td>';
+									echo str_replace('/', '<br>', $w[$a]);
 								else
-									echo '<td>' . $w[$a] . '</td>';
+									echo $w[$a];
 							} else
-								echo '<td>-</td>';
+								echo '-';
+							echo '</td>';
 						};
 						echo '</tr>';
 					}
@@ -97,7 +99,7 @@ function html_show_listUser($val = [], $lvl = 0)
 		</table>
 		<?php ?>
 	</div>
-	<a href="#" id="goTop" class="btn btn-default " style="position: fixed; bottom: 20px; right: 20px; opacity: 1; cursor: pointer;">
+	<a href="#" id="goTop" class="btn btn-default " style="position: fixed; bottom: 20px; right: 20px; opacity: 1; cursor: pointer; z-index: 100;">
 		<span class="glyphicon glyphicon glyphicon-arrow-up"></span>
 	</a>
 
@@ -147,11 +149,13 @@ function html_show_listUser($val = [], $lvl = 0)
 			});
 		};
 		$(window).resize(function() {
-			$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
-			$('.table tbody tr th span').css("padding-top", $(".table thead ").height() + 10);
+			$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
+			$('.table tbody tr span').css("padding-top", $(".table thead ").height() + 35);
+			$('.table tbody th').css("top", $(".table thead ").height() - 1);
 		});
-		$('#DataUsers').css("margin-bottom", $("#content").height() - 70);
-		$('.table tbody tr th span').css("padding-top", $(".table thead ").height() + 10);
+		$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
+		$('.table tbody tr span').css("padding-top", $(".table thead ").height() + 35);
+		$('.table tbody th').css("top", $(".table thead ").height() - 1);
 	</script>
 
 </div>

@@ -32,20 +32,10 @@ a[href^="mailto:"] {
     background-color: #fff;
 }
 
-table>tbody>tr>td>a>span:first-child {
-    padding-left: 5px;
-    font-weight : bold;
-}
 
-table>tbody>tr>td>a>span {
-    padding-left: 20px;
-}
-
-
-.table>tbody>tr>td {
-    padding       : 1px;
-    vertical-align: inherit;
-    text-align    : center;
+.table {
+    border-collapse: collapse;
+    width          : 100%;
 }
 
 .table>thead>tr>th,
@@ -54,9 +44,31 @@ table>tbody>tr>td>a>span {
     vertical-align: middle;
 }
 
+.table>tbody>tr>td {
+    padding       : 1px;
+    vertical-align: inherit;
+    text-align    : center;
+    padding-left  : 10px;
+}
+
 .table>tbody>tr>td:first-child {
     text-align: left;
 }
+
+.table tbody tr th a {
+    text-decoration: none;
+    padding        : 10px;
+}
+
+table>tbody>tr>td>a>span:first-child {
+    padding-left: 0;
+    font-weight : bold;
+}
+
+table>tbody>tr>td>a>span {
+    padding-left: 15px;
+}
+
 
 .tableFixHead thead th {
     position        : sticky;
@@ -68,15 +80,12 @@ table>tbody>tr>td>a>span {
         inset 0 -1px 0 #dddddd;
 }
 
-.table tbody tr th a {
-    text-decoration: none;
-    padding        : 10px;
+.tableFixHead tbody th {
+    position: sticky;
+    top     : 50px;
+    z-index : 2;
 }
 
-.table {
-    border-collapse: collapse;
-    width          : 100%;
-}
 
 #main {
     bottom  : 0;
