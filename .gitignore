@@ -1,6 +1,7 @@
-config.php
-.htaccess
-/image/users/*.jpg
-/image/users/thumbnail/*.jpg
+/.vscode/*
+
+/config/*
+!/config/*-example
 /localsave/*
-files/docreguserad.docx
+/logs/*
+/image/users/*
