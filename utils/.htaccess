@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /
+Options +Indexes
+Options +FollowSymLinks
+IndexOptions Charset=utf-8
+
+<IfModule mod_autoindex.c>
+IndexOptions IgnoreCase FancyIndexing FoldersFirst NameWidth=* DescriptionWidth=* XHTML HTMLtable SuppressHTMLPreamble SuppressRules SuppressLastModified
+	IndexOrderDefault Ascending Name
+	IndexIgnore .*
+</IfModule>
+

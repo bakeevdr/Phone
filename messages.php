@@ -6,20 +6,19 @@
 	}
 
 If ($ShowMSG) {
-	setcookie("ShowMSG[CARR]", "Show", time()+3600);
+	setcookie("ShowMSG[CARR]", "Show", time()+60*60*10); /* сек * мин * часы */
 	$ShowMessages= '
 		<div id="myModal" class="modal fade bs-example-modal-sm" aria-hidden="true" aria-labelledby="mySmallModalLabel" role="dialog" tabindex="-1" style="display: none;">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button class="close" aria-hidden="true" data-dismiss="modal" type="button">X</button>
-						<h4 id="mySmallModalLabel" class="modal-title">!!! ВНИМАНИЕ !!! Тестовый запуск</h4>
+						<h4 id="mySmallModalLabel" class="modal-title">!!! ВНИМАНИЕ !!!</h4>
 					</div>
 					<div class="modal-body"> 
-						<p>Телефонный справочник ЦА Росреестра запущен в рамках тестовой эксплуатации ФГБУ "ФКП Росреестра".</p>
 						<p>Данные импортированы с телефонного справочника, предоставленного ЦА Росреестра на FTP сервере "FTP://10.128.1.8/INFO/Телефонные справочники/Справочник ведомственной телефонной сети Росреестра.xls". </p>
 						<br>
-						<p>По вопросам функционирования справочника следует обращаться к заместителю начальника Управления информационных технологий, Зинатуллину И.Р. <br> IP: 0(99) 6616 <br> E-Mail:ZinatullinIR@kadastr.ru</p>
+						<p>По вопросам функционирования справочника следует обращаться на support.kadastr.ru, "Сервисы ФГБУ "ФКП Росреестра"" -> "Телефонный справочник"</p>
 					</div>
 				</div>
 			</div>

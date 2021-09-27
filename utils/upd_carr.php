@@ -4,17 +4,41 @@
 	$password	= "q8BqCs";			// Пароль от FTP-сервера
 	$XLSPath	= 'INFO/Телефонные справочники/';
 	$XLSName	= 'Справочник ведомственной телефонной сети Росреестра.xls';
-	$WebFolder	='/srv/www/telphone';
+	$WebFolder	='/srv/www/telphone/';
 
 	// --------------------------------------------------------------------------------------------
 	
+	Function save_check_status($mess, $Type = 0){
+		global $WebFolder;
+		$status = ($Type===0)?'ok':'err' ;
+		$message = ($Type===0)?'':$mess ;
+		file_put_contents($WebFolder.'/check_status.json.php', 
+<<<MDRSQLORA
+<?php
+	header('Content-Type: application/json');
+	\$data = array();
+	\$data['status'] = '{$status}';
+	\$data['message'] = '{$message}';
+	echo json_encode(\$data );
+?>
+MDRSQLORA
+		);
+
+	}
+	
 	Function Show_log($mess, $Type = 0){
 		global $WebFolder;
-		if ($Type === 1) $mess = "!!! ВНИМАНИЕ !!! $mess" ;
-		file_put_contents($WebFolder.'/logs/upd_carr', date("Y-m-d H:i:s").' - '.$mess."\r\n",FILE_APPEND);
+		if ($Type === 1) {
+			$mess = "!!! ВНИМАНИЕ !!! $mess" ;
+			save_check_status($mess, $Type);
+		}
+		file_put_contents($WebFolder.'/logs/upd_carr.log', date("Y-m-d H:i:s").' - '.$mess."\r\n",FILE_APPEND);
 		Echo date("Y-m-d H:i:s")." - $mess<br>";
+		
 	};
-	
+
+	save_check_status('ok');
+
 	Show_log("Конвертирование Excel файла Управления Росрееста.");
 	$TMPFolter = sys_get_temp_dir().'/telphone';
 	if (!is_dir($TMPFolter))
@@ -23,12 +47,15 @@
 	
 	if($connect = ftp_connect($host)){
 		if (ftp_login($connect, $user, $password)) {
-			ftp_chdir($connect, iconv('utf-8', 'windows-1251',$XLSPath));
-			if (ftp_get($connect,  $XLS_Local, iconv('utf-8', 'windows-1251',$XLSName), FTP_BINARY)) {/**/
-				Show_log('Файл загружен с FTP сервера.');
+			if (ftp_chdir($connect, $XLSPath)){
+				if (ftp_get($connect,  $XLS_Local, $XLSName, FTP_BINARY)) {/**/
+					Show_log('Файл загружен с FTP сервера.');
+				}
+				Else
+					Show_log('Ошибка получения справочника с FTP.', 1);
 			}
-			Else
-				Show_log('Ошибка получения справочника с FTP.', 1);
+			Else 
+				Show_log('Ошибка смены директории на FTP.', 1);
 		}
 		Else 
 			Show_log("Неправильный Логин или Пароль к FTP ресурсу.", 1);
@@ -37,11 +64,11 @@
 		Show_log("Ошибка подключения к хосту (ftp_connect) $host .", 1);
 	
 	if (file_exists($XLS_Local)) {
-		Show_log("Начинаем разбор XML справочника.");
+		Show_log("Начинаем разбор XLS справочника.");
 		$res = array();
 		$data = array();
 		$otdel='';
-		$objectguid=0;
+		$objectguid=10;
 		function phone_format($phones,$Pref='', $Ncount=0){							// Форматирование телефона
 			$phones = str_replace(';', ',', $phones);
 			$phones = str_replace(':', ',', $phones);
@@ -110,7 +137,7 @@
 			(Trim($aSheet->getCellByColumnAndRow(3,2)->getCalculatedValue()) === 'каб.') &&
 			(Trim($aSheet->getCellByColumnAndRow(5,2)->getCalculatedValue()) === 'вн. тел. Avaya 99') &&
 			(Trim($aSheet->getCellByColumnAndRow(6,2)->getCalculatedValue()) === 'городской 495') &&
-			(Trim($aSheet->getCellByColumnAndRow(7,2)->getCalculatedValue()) === 'гор. резервный 495') &&
+			(Trim($aSheet->getCellByColumnAndRow(7,2)->getCalculatedValue()) === 'городской 495') &&
 			(Trim($aSheet->getCellByColumnAndRow(8,2)->getCalculatedValue()) === 'адрес')
 		)
 		{
@@ -118,14 +145,20 @@
 				If (substr($none_V,1,strpos($none_V,':')-1) === substr($none_V,strpos($none_V,':')+2,10))
 					$MergeRow[] = substr($none_V,1,strpos($none_V,':')-1);
 			}/**/
+			$DateFile=date('Дата актуальности d-m-Y', PHPExcel_Shared_Date::ExcelToPHP($aSheet->getCellByColumnAndRow(7,1)->getCalculatedValue()));
 			$res[] =	array (
-				'department' => date('Дата актуальности d-m-Y', PHPExcel_Shared_Date::ExcelToPHP($aSheet->getCellByColumnAndRow(7,1)->getCalculatedValue())) ,
-				'displayname' => date('Дата актуальности d-m-Y', PHPExcel_Shared_Date::ExcelToPHP($aSheet->getCellByColumnAndRow(7,1)->getCalculatedValue())) ,
+				'department' =>  $DateFile,
+				'department2' => $DateFile.'2|@|'.$DateFile,
+				'displayname' => $DateFile,
 				'dn'=>null,
 			);/**/
+			$otdel_parent='';
 			for	($i=3;$i<1111;$i++) {
 				if (!empty($aSheet->getCellByColumnAndRow(0,$i)->getValue())) {
 					$otdel = $aSheet->getCellByColumnAndRow(0,$i)->getCalculatedValue();
+				}
+				if (mb_stripos ($otdel,'управление')!==false) {
+					$otdel_parent = $otdel;
 				}
 				
 				if ($objPHPExcel->getActiveSheet()->getRowDimension($i)->getOutlineLevel()===0) {
@@ -135,6 +168,7 @@
 						if (!empty(trim($aSheet->getCellByColumnAndRow(0,$i)->getValue())))
 							$res[] =	array (
 								'department' => $otdel,
+								'department2' => $_manager.'2|@|'.$otdel,
 								'displayname' => $otdel,
 								'dn'=>null,
 							);
@@ -150,6 +184,7 @@
 					$res[] =	array(
 							'manager'=>(($aSheet->getCellByColumnAndRow(2,$i)->getValue()!==$_manager)?'CN='.$_manager:null),
 							'department'=>$otdel,
+							'department2'=>($otdel_parent!=''?$otdel_parent:$otdel).'2|@|'.$otdel,
 							'displayname' => ($aSheet->getCellByColumnAndRow(2,$i)->getValue()!==null)?$aSheet->getCellByColumnAndRow(2,$i)->getCalculatedValue():$aSheet->getCellByColumnAndRow(1,$i)->getCalculatedValue(),
 							'title'=> $aSheet->getCellByColumnAndRow(1,$i)->getCalculatedValue(),
 							'physicaldeliveryofficename' => $aSheet->getCellByColumnAndRow(3,$i)->getCalculatedValue(),
@@ -162,7 +197,7 @@
 				}
 			}
 			if (count($res)>500) {
-				$File = fopen($WebFolder.'/localsave/Cache_128.php',"w");
+				$File = fopen($WebFolder.'/localsave/Cache_100_128_1.php',"w");
 				fwrite($File, '<?php ');
 				fwrite($File, 'return '.var_export(array('0'=>$res),true));
 				fwrite($File, ' ?>');
@@ -170,8 +205,9 @@
 				Show_log("Конвертирование закончено успешно.");
 			}
 		}
-		else 
+		else {
 			Show_log("Изменилась структура Excel.", 1);
+		}
 		unlink($XLS_Local);
 	}
 	Else 

@@ -11,6 +11,7 @@
 		$LDAPSearch = $ID[2];
 	
 		$LDAPCon	= new LDAP($P_LDAP[$LDAPCurent]['Server'], $P_LDAP[$LDAPCurent]['User'], $P_LDAP[$LDAPCurent]['Pass']);	
+		empty($P_LDAP[$LDAPCurent]["FullNameDepartment"])  ? null : $LDAPCon->FullNameDepartment = $P_LDAP[$LDAPCurent]["FullNameDepartment"];
 		$ArrData	= $LDAPCon->getArray(
 									$P_LDAP[$LDAPCurent]['DC'], 
 									$LDAPSearch, 
