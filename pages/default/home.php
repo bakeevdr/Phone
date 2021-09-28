@@ -104,60 +104,62 @@ function html_show_listUser($val = [], $lvl = 0)
 	</a>
 
 	<script type="text/javascript">
-		$(function() {
-			$('#goTop').click(function() {
-				$('#content').animate({
-					scrollTop: 0
-				}, 500);
-				return false;
-			})
+		$('#goTop').click(function() {
+			$('#content').animate({
+				scrollTop: 0
+			}, 500);
+			return false;
+		})
 
-			var split_min = 200;
-			var split_max = 3600;
-			var split_mainmin = 800;
+		var split_min = 200;
+		var split_max = 3600;
+		var split_mainmin = 800;
 
-			$('#split-bar').mousedown(function(e) {
+		$('#split-bar').mousedown(function(e) {
+			e.preventDefault();
+			$(document).mousemove(function(e) {
 				e.preventDefault();
-				$(document).mousemove(function(e) {
-					e.preventDefault();
-					var x = e.pageX - $('#sidebar').offset().left;
-					if (x > split_min && x < split_max && e.pageX < ($(window).width() - split_mainmin)) {
-						x = x - 6;
-						$('#sidebar').css("width", x);
-					}
-				})
+				var x = e.pageX - $('#sidebar').offset().left;
+				if (x > split_min && x < split_max && e.pageX < ($(window).width() - split_mainmin)) {
+					x = x - 6;
+					$('#sidebar').css("width", x);
+				}
+			})
+		});
+		$(document).mouseup(function(e) {
+			document.cookie = "split=" + ($('#split-bar').offset().left - 5);
+			$(document).unbind('mousemove');
+		});
+
+		function ShowUserModal(qrg) {
+			$.ajax({
+				type: 'POST',
+				url: $(qrg).data("text"),
+				beforeSend: function() {
+					$("#modal-windows #modal-label").html('Информация о сотруднике');
+					$("#modal-windows .modal-dialog").addClass('modal-lg');
+					$("#result").html('Загрузка .....');
+				},
+				success: function(data) {
+					$("#result").html(data);
+				},
+				error: function(data) {
+					$("#result").html('Ошибка загрузки');
+				}
 			});
-			$(document).mouseup(function(e) {
-				document.cookie = "split=" + ($('#split-bar').offset().left - 5);
-				$(document).unbind('mousemove');
-			});
+		};
+		$.fn.isInViewport = function() {
+			var elementTop = $(this).offset().top;
+			var elementBottom = elementTop + $(this).outerHeight();
 
-			function ShowUserModal(qrg) {
-				$.ajax({
-					type: 'POST',
-					url: $(qrg).data("text"),
-					beforeSend: function() {
-						$("#modal-windows #modal-label").html('Информация о сотруднике');
-						$("#modal-windows .modal-dialog").addClass('modal-lg');
-						$("#result").html('Загрузка .....');
-					},
-					success: function(data) {
-						$("#result").html(data);
-					},
-					error: function(data) {
-						$("#result").html('Ошибка загрузки');
-					}
-				});
-			};
-			$.fn.isInViewport = function() {
-				var elementTop = $(this).offset().top;
-				var elementBottom = elementTop + $(this).outerHeight();
+			var viewportTop = $(window).scrollTop() + $(".navbar").height();
+			var viewportBottom = viewportTop + $(window).height();
 
-				var viewportTop = $(window).scrollTop() + $(".navbar").height();
-				var viewportBottom = viewportTop + $(window).height();
+			return elementTop > viewportTop && elementBottom < viewportBottom;
+		};
 
-				return elementTop > viewportTop && elementBottom < viewportBottom;
-			};
+
+		$(function() {
 
 			$("#content").on('scroll', function() {
 				Dep_act = $('#sidebar').find('.active');
