@@ -162,12 +162,14 @@ function html_show_listUser($val = [], $lvl = 0)
 		$(function() {
 
 			$("#content").on('scroll', function() {
-				Dep_act = $('#sidebar').find('.active');
-				if (Dep_act.eq(0).length != 0) {
-					if (!Dep_act.eq(0).isInViewport()) {
-						Dep_act.eq(0)[0].scrollIntoView();
-					};
-				}
+				setTimeout(function() {
+					Dep_act = $('#sidebar').find('.active');
+					if (Dep_act.eq(0).length != 0) {
+						if (!Dep_act.eq(0).isInViewport()) {
+							Dep_act.eq(0)[0].scrollIntoView();
+						};
+					}
+				}, 500);
 			});
 
 			$(window).resize(function() {
