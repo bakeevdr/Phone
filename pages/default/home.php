@@ -148,6 +148,25 @@ function html_show_listUser($val = [], $lvl = 0)
 				}
 			});
 		};
+		$.fn.isInViewport = function() {
+			var elementTop = $(this).offset().top;
+			var elementBottom = elementTop + $(this).outerHeight();
+
+			var viewportTop = $(window).scrollTop() + $(".navbar").height();
+			var viewportBottom = viewportTop + $(window).height();
+
+			return elementTop > viewportTop && elementBottom < viewportBottom;
+		};
+
+		$("#content").on('scroll', function() {
+			Dep_act = $('#sidebar').find('.active');
+			if (Dep_act.eq(0).length != 0) {
+				if (!Dep_act.eq(0).isInViewport()) {
+					Dep_act.eq(0)[0].scrollIntoView();
+				};
+			}
+		});
+
 		$(window).resize(function() {
 			$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
 			$('.table tbody .GroupID').css("padding-top", $(".table thead ").height() + 35);
