@@ -104,77 +104,79 @@ function html_show_listUser($val = [], $lvl = 0)
 	</a>
 
 	<script type="text/javascript">
-		$('#goTop').click(function() {
-			$('#content').animate({
-				scrollTop: 0
-			}, 500);
-			return false;
-		})
-
-		var split_min = 200;
-		var split_max = 3600;
-		var split_mainmin = 800;
-
-		$('#split-bar').mousedown(function(e) {
-			e.preventDefault();
-			$(document).mousemove(function(e) {
-				e.preventDefault();
-				var x = e.pageX - $('#sidebar').offset().left;
-				if (x > split_min && x < split_max && e.pageX < ($(window).width() - split_mainmin)) {
-					x = x - 6;
-					$('#sidebar').css("width", x);
-				}
+		$(function() {
+			$('#goTop').click(function() {
+				$('#content').animate({
+					scrollTop: 0
+				}, 500);
+				return false;
 			})
-		});
-		$(document).mouseup(function(e) {
-			document.cookie = "split=" + ($('#split-bar').offset().left - 5);
-			$(document).unbind('mousemove');
-		});
 
-		function ShowUserModal(qrg) {
-			$.ajax({
-				type: 'POST',
-				url: $(qrg).data("text"),
-				beforeSend: function() {
-					$("#modal-windows #modal-label").html('Информация о сотруднике');
-					$("#modal-windows .modal-dialog").addClass('modal-lg');
-					$("#result").html('Загрузка .....');
-				},
-				success: function(data) {
-					$("#result").html(data);
-				},
-				error: function(data) {
-					$("#result").html('Ошибка загрузки');
+			var split_min = 200;
+			var split_max = 3600;
+			var split_mainmin = 800;
+
+			$('#split-bar').mousedown(function(e) {
+				e.preventDefault();
+				$(document).mousemove(function(e) {
+					e.preventDefault();
+					var x = e.pageX - $('#sidebar').offset().left;
+					if (x > split_min && x < split_max && e.pageX < ($(window).width() - split_mainmin)) {
+						x = x - 6;
+						$('#sidebar').css("width", x);
+					}
+				})
+			});
+			$(document).mouseup(function(e) {
+				document.cookie = "split=" + ($('#split-bar').offset().left - 5);
+				$(document).unbind('mousemove');
+			});
+
+			function ShowUserModal(qrg) {
+				$.ajax({
+					type: 'POST',
+					url: $(qrg).data("text"),
+					beforeSend: function() {
+						$("#modal-windows #modal-label").html('Информация о сотруднике');
+						$("#modal-windows .modal-dialog").addClass('modal-lg');
+						$("#result").html('Загрузка .....');
+					},
+					success: function(data) {
+						$("#result").html(data);
+					},
+					error: function(data) {
+						$("#result").html('Ошибка загрузки');
+					}
+				});
+			};
+			$.fn.isInViewport = function() {
+				var elementTop = $(this).offset().top;
+				var elementBottom = elementTop + $(this).outerHeight();
+
+				var viewportTop = $(window).scrollTop() + $(".navbar").height();
+				var viewportBottom = viewportTop + $(window).height();
+
+				return elementTop > viewportTop && elementBottom < viewportBottom;
+			};
+
+			$("#content").on('scroll', function() {
+				Dep_act = $('#sidebar').find('.active');
+				if (Dep_act.eq(0).length != 0) {
+					if (!Dep_act.eq(0).isInViewport()) {
+						Dep_act.eq(0)[0].scrollIntoView();
+					};
 				}
 			});
-		};
-		$.fn.isInViewport = function() {
-			var elementTop = $(this).offset().top;
-			var elementBottom = elementTop + $(this).outerHeight();
 
-			var viewportTop = $(window).scrollTop() + $(".navbar").height();
-			var viewportBottom = viewportTop + $(window).height();
-
-			return elementTop > viewportTop && elementBottom < viewportBottom;
-		};
-
-		$("#content").on('scroll', function() {
-			Dep_act = $('#sidebar').find('.active');
-			if (Dep_act.eq(0).length != 0) {
-				if (!Dep_act.eq(0).isInViewport()) {
-					Dep_act.eq(0)[0].scrollIntoView();
-				};
-			}
-		});
-
-		$(window).resize(function() {
+			$(window).resize(function() {
+				$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
+				$('.table tbody .GroupID').css("padding-top", $(".table thead ").height() + 35);
+				$('.table tbody th').css("top", $(".table thead ").height() - 1);
+			});
 			$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
 			$('.table tbody .GroupID').css("padding-top", $(".table thead ").height() + 35);
 			$('.table tbody th').css("top", $(".table thead ").height() - 1);
 		});
-		$('#DataUsers').css("margin-bottom", $("#content").height() - 160);
-		$('.table tbody .GroupID').css("padding-top", $(".table thead ").height() + 35);
-		$('.table tbody th').css("top", $(".table thead ").height() - 1);
 	</script>
 
 </div>
